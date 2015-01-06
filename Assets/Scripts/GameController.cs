@@ -97,11 +97,13 @@ public class GameController : MonoBehaviour
         int size = asteroids.Length;
         for (int i = 0; i < size; i++)
         {
-            Destroy(asteroids[i]);
-            
-            Object explosionObj = Instantiate(asteroidExplosion, asteroids[i].transform.position, asteroids[i].transform.rotation);
-            Destroy(explosionObj, 2);
+            if (asteroids[i] != null)
+            {
+                Object explosionObj = Instantiate(asteroidExplosion, asteroids[i].transform.position, asteroids[i].transform.rotation);
 
+                Destroy(asteroids[i]);
+                Destroy(explosionObj, 2);
+            }
             yield return new WaitForSeconds(delayBeforeDestroy);
         }
     }

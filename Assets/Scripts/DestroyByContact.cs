@@ -27,10 +27,10 @@ public class DestroyByContact : MonoBehaviour
                 gameController.GameOver();
                 explosion = playerExplosion;
             }
-            else if (other.tag == "Bolt")
+            else
             {
                 explosion = asteroidExplosion;
-                if (gameController != null)
+                if (gameController != null && other.tag == "Bolt")
                     gameController.AddScore(scoreValues);
             }
 

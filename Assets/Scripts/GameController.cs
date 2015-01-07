@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Assets.Classes;
 
 public class GameController : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class GameController : MonoBehaviour
 
     private int score = 0;
     private bool isGameOver = false;
+    private LevelManager levelManager;
 
 
     public void Start()
@@ -36,27 +38,21 @@ public class GameController : MonoBehaviour
 
     IEnumerator SpawnWaves()
     {
+        levelManager = gameObject.AddComponent<LevelManager>();
+        levelManager.InitLevel();
+
         yield return new WaitForSeconds(startWait);
         while (true)
         {
-            for (int i = 0; i < hazardCount; i++)
-            {
-                SpawnWave();
-                if (isGameOver)
-                    break;
-                yield return new WaitForSeconds(hazardWait);
-            }
-            if (isGameOver)
+            Level level = levelManager.GetLevel();
+            StartCoroutine(level.SpawnWave(hazard, spawnValues));
+            levelManager.NextLevel();
+
+            if (levelManager.IsEnded())
                 break;
+
             yield return new WaitForSeconds(waveWait);
         }
-    }
-
-    void SpawnWave()
-    {
-        Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
-        Quaternion spawnRotation = Quaternion.identity;
-        Instantiate(hazard, spawnPosition, spawnRotation);
     }
 
     public void AddScore(int newScore)

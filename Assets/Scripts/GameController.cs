@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
     public float waveWait;
     public Vector3 spawnValues;
     public float delayBeforeDestroy;
+    public float timeToProtect;
 
     private int score = 0;
     private bool isGameOver = false;
@@ -89,6 +90,14 @@ public class GameController : MonoBehaviour
         StartCoroutine(DestroyAllAsteroid());
         isGameOver = false;
         Start();
+        StartCoroutine(ProtectPlayerByShield(timeToProtect));
+    }
+
+    public IEnumerator ProtectPlayerByShield(float timeToProtect)
+    {
+        PlayerIsProtected = true;
+        yield return new WaitForSeconds(timeToProtect);
+        PlayerIsProtected = false;
     }
 
     private IEnumerator DestroyAllAsteroid()
@@ -107,4 +116,6 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(delayBeforeDestroy);
         }
     }
+
+    public bool PlayerIsProtected { get; set; }
 }

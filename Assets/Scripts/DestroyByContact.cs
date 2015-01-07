@@ -24,6 +24,9 @@ public class DestroyByContact : MonoBehaviour
             GameObject explosion = null;
             if (other.tag == "Player")
             {
+                if (gameController.PlayerIsProtected)
+                    return;
+
                 gameController.GameOver();
                 explosion = playerExplosion;
             }

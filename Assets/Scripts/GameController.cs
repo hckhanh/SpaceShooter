@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
 {
     public GameObject player;
     public GameObject hazard;
-    public GameObject asteroidExplosion;
+    public GameObject gameOverTrigger;
 
     public Text scoreText;
     public Text gameOverText;
@@ -15,10 +15,7 @@ public class GameController : MonoBehaviour
 
     public int hazardCount;
     public float startWait;
-    public float hazardWait;
-    public float waveWait;
     public Vector3 spawnValues;
-    public float delayBeforeDestroy;
     public float timeToProtect;
 
     private int score = 0;
@@ -42,17 +39,11 @@ public class GameController : MonoBehaviour
         levelManager.InitLevel();
 
         yield return new WaitForSeconds(startWait);
-        while (true)
-        {
-            Level level = levelManager.GetLevel();
-            StartCoroutine(level.SpawnWave(hazard, spawnValues));
-            levelManager.NextLevel();
+        Vector3 spawnPoint = spawnValues;
+        levelManager.SpawnWave(hazard, ref spawnPoint);
 
-            if (levelManager.IsEnded())
-                break;
-
-            yield return new WaitForSeconds(waveWait);
-        }
+        Vector3 spawnTrigger = new Vector3(0, 0, spawnPoint.z + 2);
+        Instantiate(gameOverTrigger, spawnTrigger, Quaternion.identity);
     }
 
     public void AddScore(int newScore)
@@ -83,7 +74,7 @@ public class GameController : MonoBehaviour
 
     private void Restart()
     {
-        StartCoroutine(DestroyAllAsteroid());
+        DestroyAllAsteroid();
         isGameOver = false;
         Start();
         StartCoroutine(ProtectPlayerByShield(timeToProtect));
@@ -96,7 +87,7 @@ public class GameController : MonoBehaviour
         PlayerIsProtected = false;
     }
 
-    private IEnumerator DestroyAllAsteroid()
+    private void DestroyAllAsteroid()
     {
         GameObject[] asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
         int size = asteroids.Length;
@@ -104,12 +95,8 @@ public class GameController : MonoBehaviour
         {
             if (asteroids[i] != null)
             {
-                Object explosionObj = Instantiate(asteroidExplosion, asteroids[i].transform.position, asteroids[i].transform.rotation);
-
                 Destroy(asteroids[i]);
-                Destroy(explosionObj, 2);
             }
-            yield return new WaitForSeconds(delayBeforeDestroy);
         }
     }
 

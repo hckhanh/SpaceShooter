@@ -4,19 +4,16 @@ using UnityEngine;
 
 public abstract class Level : MonoBehaviour
 {
-    protected bool isEnded = false;
+    public LevelManager Manager { get; set; }
 
-    public abstract IEnumerator SpawnWave(GameObject hazard, Vector3 spawnValues);
+    public abstract void NextLevel();
 
-    public abstract void NextLevel(LevelManager levelManager);
+    protected abstract void OnSpawnWave(GameObject hazard, ref Vector3 spawnValues);
 
-    public bool IsEnded()
+    public void SpawnWave(GameObject hazard, ref Vector3 spawnValues)
     {
-        return isEnded;
-    }
-
-    public GameObject GetHazard(GameObject[] hazards)
-    {
-        return hazards[Random.Range(0, hazards.Length)];
+        OnSpawnWave(hazard, ref spawnValues);
+        NextLevel();
+        Manager.SpawnWave(hazard, ref spawnValues);
     }
 }

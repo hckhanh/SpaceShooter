@@ -9,20 +9,19 @@ namespace Assets.Classes
     public class LevelManager : MonoBehaviour
     {
         private Level currentLevel;
+        public GameController Controller { get; set; }
 
         public void InitLevel()
         {
             currentLevel = gameObject.AddComponent<Level1>();
-        }
-
-        public void NextLevel()
-        {
-            currentLevel.NextLevel(this);
+            currentLevel.Manager = this;
         }
 
         public void SetLevel(Level level)
         {
             currentLevel = level;
+            if (level != null)
+                currentLevel.Manager = this;
         }
 
         public Level GetLevel()
@@ -30,9 +29,10 @@ namespace Assets.Classes
             return currentLevel;
         }
 
-        public bool IsEnded()
+        public void SpawnWave(GameObject hazard, ref Vector3 spawnValues)
         {
-            return currentLevel.IsEnded();
+            if (currentLevel != null)
+                currentLevel.SpawnWave(hazard, ref spawnValues);
         }
     }
 }

@@ -5,25 +5,23 @@ namespace Assets.Classes
 {
     public class Level2 : Level
     {
-        public override IEnumerator SpawnWave(GameObject hazard, Vector3 spawnValues)
+        protected override void OnSpawnWave(GameObject hazard, ref Vector3 spawnValues)
         {
-            isEnded = true;
-
             // A line
             Vector3 spawnPosition = spawnValues;
+            spawnPosition.z += 10;
             for (int i = 0; i < 50; i++)
             {
                 spawnPosition.x = Random.Range(-spawnValues.x, spawnValues.x);
                 Instantiate(hazard, spawnPosition, Quaternion.identity);
-                yield return new WaitForSeconds(0.4f);
+                spawnPosition.z += 2;
             }
-
-            yield return new WaitForSeconds(3.0f);
+            spawnValues.z = spawnPosition.z + 2;
         }
 
-        public override void NextLevel(LevelManager levelManager)
+        public override void NextLevel()
         {
-            //levelManager.SetLevel(new Level3());
+            Manager.SetLevel(gameObject.AddComponent<Level3>());
         }
     }
 }
